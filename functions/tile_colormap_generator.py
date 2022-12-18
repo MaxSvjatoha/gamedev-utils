@@ -2,15 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import List, Tuple, Union
 
-# Discovered good color combinations:
-# Dirt: (180/255, 120/255, 50/255), (150/255, 100/255, 40/255), (120/255, 80/255, 30/255)
-# Grass: (0/255, 255/255, 0/255), (0/255, 200/255, 0/255), (0/255, 150/255, 0/255)
-
 size = (64, 64)
-colors = [(180/255, 120/255, 50/255), (150/255, 100/255, 40/255), (120/255, 80/255, 30/255)]
-probabilities = [0.1, 0.3, 0.6]
 
-def generate_tile(size: Tuple[int, int], colors: Union[Tuple[int, int, int], List[Tuple[int, int, int]]], probabilities: List[float]) -> np.ndarray:
+colormaps = {
+            "dirt": {"colors": [(180/255, 120/255, 50/255), (150/255, 100/255, 40/255), (120/255, 80/255, 30/255)], "probabilities": [0.1, 0.3, 0.6]},
+            "grass": {"colors": [(0/255, 255/255, 0/255), (0/255, 200/255, 0/255), (0/255, 150/255, 0/255)], "probabilities": [0.1, 0.3, 0.6]},
+            "water": {"colors": [(0/255, 0/255, 255/255), (0/255, 0/255, 200/255), (0/255, 0/255, 150/255)], "probabilities": [0.1, 0.3, 0.6]},
+            "sand": {"colors": [(255/255, 255/255, 0/255), (200/255, 200/255, 0/255), (150/255, 150/255, 0/255)], "probabilities": [0.1, 0.3, 0.6]},
+            "stone": {"colors": [(100/255, 100/255, 100/255), (80/255, 80/255, 80/255), (60/255, 60/255, 60/255)], "probabilities": [0.1, 0.3, 0.6]},
+            }
+
+def generate_tile(size: Tuple[int, int], colors: Union[Tuple[int, int, int], List[Tuple[int, int, int]]], probabilities: List[float], show_tile: bool = False, save: bool = False, save_name: Union[str, None] = None) -> np.ndarray:
     """
     Generate a random tile with the specified size and colors using the specified probabilities.
     
@@ -39,10 +41,20 @@ def generate_tile(size: Tuple[int, int], colors: Union[Tuple[int, int, int], Lis
                 r -= p
             # Set the pixel at position (i, j) to the chosen color
             tile[i, j] = color
+    # Display the tile
+    if show_tile:
+        plt.imshow(tile)
+        plt.show()   
+    # Save the tile as an image file
+    if save:
+        if save_name == None:
+            plt.imsave("tile.png", tile)
+        else:
+            plt.imsave(save_name, tile)
     return tile
 
 
-def generate_sample_grid(size: Tuple[int, int], colors: Union[Tuple[int, int, int], List[Tuple[int, int, int]]], probabilities: List[float], save: bool, save_name: Union[str, None] = None) -> None:
+def generate_sample_grid(size: Tuple[int, int], colors: Union[Tuple[int, int, int], List[Tuple[int, int, int]]], probabilities: List[float], save: bool = False, save_name: Union[str, None] = None) -> None:
     """
     Generate a 4x4 grid of random tiles using the specified size, colors, and probabilities, and display or save it.
     
@@ -55,6 +67,8 @@ def generate_sample_grid(size: Tuple[int, int], colors: Union[Tuple[int, int, in
     
     Returns:
     None
+    
+    Example:
     """
     # Convert colors to a list if it is a single tuple
     if isinstance(colors, tuple):
@@ -85,3 +99,4 @@ def generate_sample_grid(size: Tuple[int, int], colors: Union[Tuple[int, int, in
 
     # Show the plot
     plt.show()
+    plt.close(fig)
