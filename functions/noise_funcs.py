@@ -8,9 +8,9 @@ from typing import Tuple
 
 import sys
 
-def white_noise(shape: Tuple[int, int], range: Tuple[float, float] = (0, 1)) -> np.ndarray:
+def white_noise(shape: Tuple[int, int], input_range: Tuple[float, float] = (0, 1)) -> np.ndarray:
     """
-    Generate white noise using NumPy.
+    Generate white noise field using NumPy.
     
     Parameters
     ----------
@@ -36,11 +36,16 @@ def white_noise(shape: Tuple[int, int], range: Tuple[float, float] = (0, 1)) -> 
     >>> shape = (256, 256, 256)
     >>> noise = white_noise(shape, range=(-1, 1))
     """
-    if range.shape != (2,):
-        raise ValueError("The output range must be a tuple of length 2.")
     
-    if range[0] > range[1]:
-        raise ValueError("The output range must be in the form (min, max).")
+    # Error checks
+    # Input range
+    assert input_range[0] < input_range[1], "The input range must be in the form (min, max)."
+    assert input_range.shape == (2,), "The input range must be a tuple of length 2."
+    assert isinstance(input_range[0], float) and isinstance(input_range[1], float), "The input range must be a tuple of floats."
+    # Shape
+    assert shape.shape == (2,), "The shape must be a tuple of length 2."
+    assert shape[0] > 0 and shape[1] > 0, "The shape must be greater than 0 in both dimensions."
+    assert isinstance(shape[0], int) and isinstance(shape[1], int), "The shape must be a tuple of integers."
     
     if range[0] == range[1]:
         return np.full(shape, range[0])
@@ -52,7 +57,7 @@ def white_noise(shape: Tuple[int, int], range: Tuple[float, float] = (0, 1)) -> 
 def perlin_noise(shape: Tuple[int, int], scale: float = 1, octaves: int = 1, 
                  persistence: float = 0.5, lacunarity: float = 2) -> np.ndarray:
     """
-    Generate Perlin noise using NumPy.
+    Generate Perlin noise field using NumPy.
     
     Parameters
     ----------
@@ -111,21 +116,3 @@ def perlin_noise(shape: Tuple[int, int], scale: float = 1, octaves: int = 1,
         amplitude *= persistence
     # Scale the output field to the desired range
     return output * scale
-
-# Test the functions in a main function
-if __name__ == "__main__":
-    
-    # TODO - Test the functions
-    print("TESTING NOISE FUNCTIONS - WRITE CODE PLZ")
-    sys.exit()
-    
-    # Generate a 2D Perlin noise field
-    shape = (256, 256)
-    noise = perlin_noise(shape)
-    print(noise.shape, noise.min(), noise.max())
-          
-    # Generate a 2D white noise field
-
-    shape = (256, 256)
-    noise = white_noise(shape)
-    print(noise.shape, noise.min(), noise.max())

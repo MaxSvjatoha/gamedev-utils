@@ -2,11 +2,18 @@
 
 from functions.tile_colormap_settings import *
 from functions.tile_generator import *
+from functions.noise_funcs import *
 
 import sys
 import os
 
 if __name__ == '__main__':
+    
+    print("starting script")
+    
+    # Additional testing code here
+    
+    sys.exit()
     
     # Load the tile colormap settings
     tile_types = []
