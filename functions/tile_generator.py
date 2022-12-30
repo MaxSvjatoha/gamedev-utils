@@ -27,7 +27,7 @@ def generate_tile(size: Tuple[int, int] = None, colors: Union[Tuple[int, int, in
     # Size
     if size is None:
         raise ValueError("A size is required and none was specified.")
-    if size.shape != (2,):
+    if len(size) != 2:
         raise ValueError("The size must be a tuple of length 2.")
     if size[0] <= 0 or size[1] <= 0:
         raise ValueError("The size must be greater than 0 in both dimensions.")
@@ -54,8 +54,8 @@ def generate_tile(size: Tuple[int, int] = None, colors: Union[Tuple[int, int, in
     
     # Initialize the tile as a 3D array of zeros
     tile = np.zeros(size + (3,))
-    # Initialize the color to the first color in the list
-    color = colors[0]
+    # Initialize the color as None
+    color = None
     
     for i, j in np.ndindex(noise_field.shape):
         # Use the value at position (i, j) in the noise field as the probability
@@ -70,17 +70,23 @@ def generate_tile(size: Tuple[int, int] = None, colors: Union[Tuple[int, int, in
             r -= p
         # Set the pixel at position (i, j) to the chosen color
         tile[i, j] = color
-        
-    # Display the tile
-    if show_tile:
-        plt.imshow(tile)
-        plt.show()   
-    # Save the tile as an image file
-    if save:
-        if save_name == None:
-            plt.imsave("images/tile.png", tile)
-        else:
-            plt.imsave(save_name, tile)
+
+
+    if show_tile or save:
+        # Rescale the values to the range 0-1
+        tile = tile / 255
+        # Clip the values to the range 0-1
+        tile = np.clip(tile, 0, 1)
+        # Display the tile
+        if show_tile:
+            plt.imshow(tile)
+            plt.show()   
+        # Save the tile as an image file
+        if save:
+            if save_name == None:
+                plt.imsave("images/tile.png", tile)
+            else:
+                plt.imsave(save_name, tile)
     return tile
 
 
@@ -136,9 +142,3 @@ def generate_sample_grid(size: Tuple[int, int], colors: Union[Tuple[int, int, in
     # Show the plot
     plt.show()
     plt.close(fig)
-    
-# Test generate_tile using its example
-if __name__ == '__main__':
-    
-    # TODO: fix AttributeError: 'tuple' object has no attribute 'shape' (line 30, if size.shape != (2,):)
-    generate_tile(size=(256, 256), colors=[(255, 0, 0), (0, 255, 0), (0, 0, 255)], probabilities=[0.5, 0.3, 0.2], show_tile=True)
